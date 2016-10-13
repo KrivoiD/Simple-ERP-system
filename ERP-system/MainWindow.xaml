@@ -1,0 +1,260 @@
+﻿<Window x:Class="ERPsystem.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        xmlns:my="clr-namespace:ERPsystem"
+        xmlns:cmd="clr-namespace:ERPsystem.Classes"
+        Title="Данные по лаборатории" Height="500" Width="600" MinHeight="500" MinWidth="600"
+        Background="{StaticResource ResourceKey=ControlBackgroundNormal}">
+    <Window.CommandBindings>
+        <CommandBinding Command="Close" Executed="Close_Executed"/>
+        <CommandBinding Command="Save" Executed="Save_Executed"/>
+        <CommandBinding Command="SaveAs" Executed="Save_Executed"/>
+        <CommandBinding Command="Open" Executed="Open_Executed"/>
+        <CommandBinding Command="cmd:Commands.EmployeerView" Executed="EmployeerView_Executed"/>
+        <CommandBinding Command="cmd:Commands.NewEmployeer" Executed="NewEmployeer_Executed"/>
+        <CommandBinding Command="cmd:Commands.RemoveEmployeer" Executed="RemoveEmployeer_Executed" CanExecute="RemoveEmployeer_CanExecute"/>
+        <CommandBinding Command="cmd:Commands.AddRow" Executed="AddRow_Executed" CanExecute="AddRow_CanExecute"/>
+        <CommandBinding Command="cmd:Commands.RemoveRow" Executed="RemoveRow_Executed" CanExecute="RemoveRow_CanExecute"/>
+        <CommandBinding Command="cmd:Commands.SaveChanges" Executed="SaveChanges_Executed" CanExecute="SaveChanges_CanExecute"/>
+        
+    </Window.CommandBindings>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto" MinHeight="110"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*" MinHeight="50"/>
+        </Grid.RowDefinitions>
+        
+        <!--Меню-->
+        <Menu Grid.Row="0" >
+            <MenuItem Header="Файл">
+                <MenuItem Header="Загрузить из..." Command="Open"/>
+                <Separator/>
+                <MenuItem Header="Сохранить" Command="Save"/>
+                <MenuItem Header="Сохранить как..." Command="SaveAs" CommandParameter="SaveAs"/>
+                <Separator/>
+                <MenuItem Header="Выход" Command="Close"/>
+            </MenuItem>
+            <MenuItem Header="Добавить">
+                <MenuItem Header="Публикацию" Command="cmd:Commands.AddRow" CommandParameter="Publications"/>
+                <MenuItem Header="Проект" Command="cmd:Commands.AddRow" CommandParameter="Projects"/>
+            </MenuItem>
+            <MenuItem Header="Сотрудники">
+                <MenuItem Header="Обзор сотрудников" Command="cmd:Commands.EmployeerView"/>
+                <Separator/>
+                <MenuItem Header="Новый сотрудник" Command="cmd:Commands.NewEmployeer"/>
+                <MenuItem Header="Уволить сотрудника" Command="cmd:Commands.RemoveEmployeer"/>
+            </MenuItem>
+        </Menu>
+        
+        <!--Панель инструментов-->
+        <ToolBar Grid.Row="1">
+            <Button ToolTip="Загрузить из..." Command="Open">
+                <Path Width="26.5833" Height="19" Stretch="Fill" Fill="{StaticResource FillPath}" Data="{StaticResource folder_openStyle0}" />
+            </Button>
+            <Button ToolTip="Сохранить" Command="Save">
+                <Path Width="22" Height="22" Stretch="Fill" Fill="{StaticResource FillPath}" Data="{StaticResource diskStyle0}" />
+            </Button>
+            <Separator/>
+            <Button ToolTip="Добавить публикацию" Command="cmd:Commands.AddRow" CommandParameter="Publications">
+                <Path Width="31.0167" Height="20.5333" Stretch="Fill" Fill="{StaticResource FillPath}" Data="{StaticResource grade_a_plusStyle0}" />
+            </Button>
+            <Button ToolTip="Добавить проект" Command="cmd:Commands.AddRow" CommandParameter="Projects">
+                <Path Width="28.79" Height="20.5333" Stretch="Fill" Fill="{StaticResource FillPath}" Data="{StaticResource grade_b_plusStyle0}" />
+            </Button>
+            <Separator/>
+            <Button ToolTip="Обзор соотрудников" Command="cmd:Commands.EmployeerView">
+                <Path Width="24" Height="24" Stretch="Fill" Fill="{StaticResource FillPath}" Data="{StaticResource user_tieStyle0}" />
+            </Button>
+            <Button ToolTip="Новый соотрудник" Command="cmd:Commands.NewEmployeer">
+                <Path Width="24" Height="25" Stretch="Fill" Fill="{StaticResource FillPath}" Data="{StaticResource user_addStyle0}" />
+            </Button>
+            <Button ToolTip="Уволить соотрудника" Command="cmd:Commands.RemoveEmployeer">
+                <Path Width="26" Height="27.3137" Stretch="Fill" Fill="{StaticResource FillPath}" Data="{StaticResource user_deleteStyle0}" />
+            </Button>
+        </ToolBar>
+        
+        <!--Информация о лаборатории-->
+        <StackPanel Grid.Row="2">
+            <TextBlock Grid.Row="0" DataContext="{x:Static my:DataBase.Laboratory}" Text="{Binding Path=Name}" 
+                       Foreground="{StaticResource ResourceKey=ControlForegroundWhite}" FontSize="16"
+                       HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
+            <TextBlock Grid.Row="0" DataContext="{x:Static my:DataBase.Laboratory}" Text="{Binding Path=Head}" 
+                       Foreground="{StaticResource ResourceKey=ControlForeground}" 
+                       HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
+        </StackPanel>
+        
+        <!--Список сотрудников-->
+        <ListBox Grid.Row="3" x:Name="lstEmployees" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" 
+                 DataContext="{x:Static my:DataBase.Laboratory}"  ItemsSource="{Binding Path=Employees, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" ItemTemplate="{StaticResource ItemTemplate}"
+                 MouseDoubleClick="lstEmployees_MouseDoubleClick">
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Просмотр" Command="cmd:Commands.EmployeerView"/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+        
+        <!--Список публикаций-->  
+        <Grid Grid.Row="4" Background="{StaticResource ResourceKey=ControlLightBackground}" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!--Отображение списка публикаций-->
+            <DataGrid Grid.Row="0" x:Name="dgPublications" AutoGenerateColumns="False" IsReadOnly="True" Margin="5" Background="Transparent" HeadersVisibility="Column"
+                  DataContext="{x:Static my:DataBase.Laboratory}" ItemsSource="{Binding Path=Publications}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Название" Binding="{Binding Path=Title, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="3*" IsReadOnly="False"/>
+                    <DataGridTextColumn Header="Где опубликовано" Binding="{Binding Path=Journal, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                    <DataGridTextColumn Header="Дата публикации" Binding="{Binding Path=PublicationDate, StringFormat={}{0:dd.MM.yyyy}, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                    <DataGridTemplateColumn Header="Авторы" IsReadOnly="True" Width="2*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <DataGrid x:Name="dgAuthors" ItemsSource="{Binding Path=Authors, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, TargetNullValue='Введите имя и фамилию'}" 
+                                      AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="None">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Binding="{Binding}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Добавить публикацию" Command="cmd:Commands.AddRow" CommandParameter="Publications"/>
+                        <MenuItem Header="Удалить выделенную публикацию" Command="cmd:Commands.RemoveRow" CommandParameter="Publications"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+            </DataGrid>
+            <!--Добавление публикаций-->
+            <DataGrid Grid.Row="1" x:Name="dgAddPublications" AutoGenerateColumns="False" IsReadOnly="False" Visibility="Collapsed" HeadersVisibility="None" Margin="5"
+                  ItemsSource="{Binding Source={x:Static my:DataBase.LastAddedPublications}}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Название" Binding="{Binding Path=Title, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="3*"/>
+                    <DataGridTextColumn Header="Где опубликовано" Binding="{Binding Path=Journal, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                    <DataGridTemplateColumn Header="Дата публикации" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <DatePicker SelectedDate="{Binding Path=PublicationDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static System:DateTime.Now}}"
+                                            DisplayDateStart="1/1/2000" DisplayDate="{x:Static System:DateTime.Now}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Авторы" Width="2*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <DataGrid ItemsSource="{Binding Path=Authors, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, TargetNullValue='Введите имя и фамилию'}" 
+                                      AutoGenerateColumns="False" IsReadOnly="False" HeadersVisibility="Column">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Имя" Binding="{Binding Path=FirstName, Mode=TwoWay}" Width="*"/>
+                                        <DataGridTextColumn Header="Фамилия" Binding="{Binding Path=LastName, Mode=TwoWay}" Width="*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Внести изменения" Command="cmd:Commands.SaveChanges" CommandParameter="Publications"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+            </DataGrid>
+        </Grid>
+        
+        <GridSplitter Grid.Row="5" Height="5" Background="{StaticResource ResourceKey=ControlBackgroundLine}" HorizontalAlignment="Stretch"/>
+        
+        <!--Список проектов-->
+        <Grid Grid.Row="6" Background="{StaticResource ResourceKey=ControlLightBackground}" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!--Отображение спика проектов-->
+            <DataGrid Grid.Row="0" x:Name="dgProjects" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column" Margin="5"
+                  DataContext="{x:Static my:DataBase.Laboratory}" ItemsSource="{Binding Path=Projects}" RowDetailsVisibilityMode="VisibleWhenSelected">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Название" Binding="{Binding Path=Name}" Width="*"/>
+                    <DataGridTextColumn Header="Руководитель" Binding="{Binding Path=Leader}" Width="auto"/>
+                    <DataGridTextColumn Header="Дата начала" Binding="{Binding Path=ProjectStart, StringFormat={}{0:dd.MM.yyyy}}" Width="auto"/>
+                    <DataGridTextColumn Header="Дата окончания" Binding="{Binding Path=ProjectEnd, StringFormat={}{0:dd.MM.yyyy}}" Width="auto"/>
+                    <DataGridTextColumn Header="Стоимость" Binding="{Binding Path=ProjectCost}" Width="auto"/>
+                </DataGrid.Columns>
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <ListBox ItemsSource="{Binding Path=Executors}">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Добавить проект" Command="cmd:Commands.AddRow" CommandParameter="Projects"/>
+                        <MenuItem Header="Удалить выделенный проект" Command="cmd:Commands.RemoveRow" CommandParameter="Projects"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+            </DataGrid>
+            <!--Добавление списка проектов-->
+            <DataGrid Grid.Row="1" x:Name="dgAddProjects" AutoGenerateColumns="False" IsReadOnly="False" Visibility="Collapsed" HeadersVisibility="None" Margin="5"
+                  ItemsSource="{Binding Source={x:Static my:DataBase.LastAddedProjects}}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Название" Binding="{Binding Path=Name, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="2*"/>
+                    <DataGridTemplateColumn Header="Дата начала" Width="auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <DatePicker SelectedDate="{Binding Path=ProjectStart, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static System:DateTime.Now}}"
+                                            DisplayDateStart="1/1/2000" DisplayDate="{x:Static System:DateTime.Now}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Дата окончания" Width="auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <DatePicker SelectedDate="{Binding Path=ProjectEnd, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged, TargetNullValue={x:Static System:DateTime.Now}}"
+                                            DisplayDateStart="1/1/2000" DisplayDate="{x:Static System:DateTime.Now}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Стоимость" Binding="{Binding Path=ProjectCost}" Width="auto"/> 
+                    <DataGridTemplateColumn Header="Исполнители" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <DataGrid ItemsSource="{Binding Path=Executors, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, TargetNullValue='Введите имя и фамилию'}" 
+                                      AutoGenerateColumns="False" IsReadOnly="False" HeadersVisibility="Column">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Имя" Binding="{Binding Path=FirstName, Mode=TwoWay}" Width="*"/>
+                                        <DataGridTextColumn Header="Фамилия" Binding="{Binding Path=LastName, Mode=TwoWay}" Width="*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Внести изменения" Command="cmd:Commands.SaveChanges" CommandParameter="Projects"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+            </DataGrid>
+        </Grid>
+        
+        
+    </Grid>
+</Window>

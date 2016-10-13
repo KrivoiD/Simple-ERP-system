@@ -1,0 +1,80 @@
+﻿<Window x:Class="ERPsystem.EmployeeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:db="clr-namespace:ERPsystem"
+        mc:Ignorable="d" 
+        Title="Подробная информация о сотрудниках" Height="400" Width="700" MinHeight="300" MinWidth="500"
+        Background="{StaticResource ResourceKey=ControlBackgroundNormal}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <ListBox Grid.Row="2" Margin="3" x:Name="lstEmployees" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                    DataContext="{x:Static db:DataBase.Laboratory}" ItemsSource="{Binding Path=Employees}" ItemTemplate="{StaticResource ResourceKey=ItemTemplate}">
+        </ListBox>
+
+        <Grid Grid.Column="1" DataContext="{Binding ElementName=lstEmployees}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" MinHeight="100" MaxHeight="200"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5" MinHeight="100">
+                <Image Source="{Binding SelectedItem.PhotoPath}" Stretch="Uniform" MaxWidth="200" VerticalAlignment="Top"/>
+                <StackPanel Orientation="Vertical" Margin="10,0,0,10" VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <TextBlock Text="{Binding SelectedItem.FirstName}" FontSize="16" Foreground="{StaticResource ResourceKey=ControlForegroundWhite}"/>
+                    <TextBlock Text="{Binding SelectedItem.LastName}" FontSize="16" Foreground="{StaticResource ResourceKey=ControlForegroundWhite}"/>
+                    <TextBlock Text="{Binding SelectedItem.ScientificDegree}" FontSize="14" Foreground="{StaticResource ResourceKey=ControlForeground}"/>
+                    <TextBlock Text="{Binding SelectedItem.Birthday, StringFormat={}{0:dd.MM.yyyy}}" FontSize="16" Foreground="{StaticResource ResourceKey=ControlForegroundWhite}"/>
+                </StackPanel>
+            </StackPanel>
+            <GridSplitter Grid.Row="1" Height="5" Background="{StaticResource ResourceKey=ControlBackgroundLine}" HorizontalAlignment="Stretch"/>
+            <DataGrid Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True"
+                        DataContext="{Binding SelectedItem}" ItemsSource="{Binding Path=Publications}"
+                        RowDetailsVisibilityMode="VisibleWhenSelected">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Название" Binding="{Binding Path=Title}" Width="*"/>
+                    <DataGridTextColumn Header="Где опубликовано" Binding="{Binding Path=Journal}" Width="auto"/>
+                </DataGrid.Columns>
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <ListBox ItemsSource="{Binding Path=Authors}">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+            </DataGrid>
+            <GridSplitter Grid.Row="3" Height="5" Background="{StaticResource ResourceKey=ControlBackgroundLine}" HorizontalAlignment="Stretch"/>
+            <DataGrid Grid.Row="4" AutoGenerateColumns="False" IsReadOnly="True"
+                      DataContext="{Binding SelectedItem}" ItemsSource="{Binding Path=Projects}"
+                      RowDetailsVisibilityMode="VisibleWhenSelected">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Название" Binding="{Binding Path=Name}" Width="*"/>
+                    <DataGridTextColumn Header="Руководитель" Binding="{Binding Path=Leader}" Width="auto"/>
+                    <DataGridTextColumn Header="Дата окончания" Binding="{Binding Path=ProjectEnd, StringFormat={}{0:dd.MM.yyyy}}" Width="auto"/>
+                </DataGrid.Columns>
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <ListBox ItemsSource="{Binding Path=Executors}">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+            </DataGrid>
+        </Grid>
+    </Grid>
+
+</Window>
